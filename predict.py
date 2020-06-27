@@ -16,7 +16,8 @@ class Prediction:
 
         try:
             image = Image.open(self.image_path)
-            img_resize = image.resize((int(image.width // 4), int(image.height // 4)))
+            image_resize = image.resize(int(image.width), int(image.height))
+            #img_resize = image.resize((int(image.width // 4), int(image.height // 4)))
             #img_resize = image.resize((416, 416))
         except:
             print('Open Error! Try again!')
