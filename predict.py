@@ -28,7 +28,6 @@ class Prediction:
 
         #yolo_instance.close_session()
         img = cv2.imread(self.image_path)
-        img = cv2.resize(img, (img.shape[1]//4, img.shape[0]//4))   # resize
 
         for result in results:
             left = int(result["left"])
