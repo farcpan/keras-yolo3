@@ -16,7 +16,7 @@ class Prediction:
 
         try:
             image = Image.open(self.image_path)
-            image_resize = image.resize(int(image.width), int(image.height))
+            img_resize = image.resize(int(image.width), int(image.height))
             #img_resize = image.resize((int(image.width // 4), int(image.height // 4)))
             #img_resize = image.resize((416, 416))
         except:
