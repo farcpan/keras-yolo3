@@ -136,6 +136,27 @@ Google Driveをマウント後、ソースコードを展開したいディレ�
 
 ---
 
+## 推論の実施
+
+デフォルトの学習結果を使って推論を実行する場合。
+
+```python
+from yolo import YOLO
+from predict import Prediction
+
+# モデルをロードしてYOLOインスタンスを生成
+yolo_instance = YOLO(
+        model_path="./model_data/yolo.h5", 
+        anchors_path="./model_data/yolo_anchors.txt",
+        classes_path="./model_data/coco_classes.txt")
+
+# 推論用のインスタンスを生成
+pred = Prediction(image_path="your_image_path")
+pred.detect_img(yolo_instance)    
+```
+
+---
+
 ## メモ
 
 ### CoreMLに変換する場合の注意点
