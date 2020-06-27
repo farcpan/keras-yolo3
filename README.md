@@ -168,8 +168,10 @@ pred.detect_img(yolo_instance)
 
 1. `.h5`ファイルをロードする。
     ```python
-    from yolo3.model import yolo_body
+    from keras.layers import Input
     from keras.models import load_model
+    from yolo3.model import yolo_body
+
 
     num_anchors = 9
     num_classes = 80    # 自作モデルの場合にはそれに合わせた数値に変更すること
