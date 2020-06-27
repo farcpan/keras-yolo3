@@ -104,7 +104,7 @@ def _main():
         # You have to use save (not save_weights)
         # because you cannot use the script for converting h5 to coreml
         # if you use save_weights API.
-        model.save(log_dir + 'trained_weights_final.h5')
+        model.save('training/trained_weights_final.h5')
 
     # Further training if needed.
 
