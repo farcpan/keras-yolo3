@@ -125,7 +125,7 @@ Google Driveをマウント後、ソースコードを展開したいディレ�
 * 画像サイズ: `train.py` 内 `_main` メソッドの以下箇所
 
     ```python
-    input_shape = (320, 320) # multiple of 32, hw
+    input_shape = (416, 320) # multiple of 32, hw
     ```
 
 * `.h5` ファイルパス: `train.py` 内 `_main` メソッドの以下箇所
@@ -172,7 +172,7 @@ pred.detect_img(yolo_instance)
     from yolo3.model import yolo_body
 
     num_anchors = 9
-    num_classes = 80    # 自作モデルの場合にはそれに合わせた数値に変更すること
+    num_classes = 6    # 自作モデルの場合にはそれに合わせた数値に変更すること
 
     yolo_model = yolo_body(Input(shape=(None,None,3)), num_anchors//3, num_classes)
     yolo_model.load_weights("./model_data/yolo.h5") # make sure model, anchors and classes match
