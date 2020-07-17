@@ -163,7 +163,6 @@ pred.detect_img(yolo_instance)
 
 `convert.py` によって生成される `.h5` ファイルは `save_weights` メソッドによって保存されているため、`coremltools`による変換がエラーになる。
 
-
 以下手順でロードしてから保存し直すことで変換ができるようになる。
 
 1. `.h5`ファイルをロードする。
@@ -171,7 +170,6 @@ pred.detect_img(yolo_instance)
     from keras.layers import Input
     from keras.models import load_model
     from yolo3.model import yolo_body
-
 
     num_anchors = 9
     num_classes = 80    # 自作モデルの場合にはそれに合わせた数値に変更すること
