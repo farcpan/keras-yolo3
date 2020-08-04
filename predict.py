@@ -29,6 +29,7 @@ class Prediction:
         #yolo_instance.close_session()
         img = cv2.imread(self.image_path)
 
+        """
         for result in results:
             left = int(result["left"])
             top = int(result["top"])
@@ -36,6 +37,8 @@ class Prediction:
             bottom = int(result["bottom"])
 
             print("label: {}, b1: ({}, {}), b2: ({}, {})".format(result["label"], left, top, right, bottom))
-            img = cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
+            #img = cv2.rectangle(img, (left, top), (right, bottom), (0, 255, 0), 2)
 
-        cv2_imshow(img)
+        #cv2_imshow(img)
+        """
+        return results
