@@ -41,4 +41,4 @@ class Prediction:
 
         #cv2_imshow(img)
         """
-        return results
+        return results, img
