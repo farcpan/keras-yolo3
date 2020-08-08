@@ -18,10 +18,12 @@ def _main():
     log_dir = 'logs/000/'
 
     # annotation data text file
-    annotation_path = 'training/annotation_sample.txt'
+    #annotation_path = 'training/annotation_sample.txt'
+    annotation_path = 'training/annotation.txt'
 
     # class definition
-    classes_path = 'training/classes_sample.txt'
+    #classes_path = 'training/classes_sample.txt'
+    classes_path = 'training/classes.txt'
 
     # anchor (default)
     anchors_path = 'model_data/yolo_anchors.txt'
@@ -30,7 +32,8 @@ def _main():
     num_classes = len(class_names)
     anchors = get_anchors(anchors_path)
 
-    input_shape = (416, 416) # multiple of 32, hw
+    #input_shape = (416, 416) # multiple of 32, hw
+    input_shape = (320, 320)
 
     is_tiny_version = (len(anchors) == 6) # default setting
     if is_tiny_version:
