@@ -15,14 +15,12 @@ from yolo3.utils import get_random_data
 
 def _main():
     # log & model file save directory
-    log_dir = 'logs/000/'
+    #log_dir = 'logs/000/'
 
     # annotation data text file
-    #annotation_path = 'training/annotation_sample.txt'
     annotation_path = 'training/annotation.txt'
 
     # class definition
-    #classes_path = 'training/classes_sample.txt'
     classes_path = 'training/classes.txt'
 
     # anchor (default)
@@ -46,9 +44,9 @@ def _main():
         #   $ wget https://pjreddie.com/media/files/yolov3.weights  
         model = create_model(input_shape, anchors, num_classes, freeze_body=2, weights_path='model_data/yolo.h5')
 
-    logging = TensorBoard(log_dir=log_dir)
-    checkpoint = ModelCheckpoint(log_dir + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5',
-        monitor='val_loss', save_weights_only=True, save_best_only=True, period=25)
+    #logging = TensorBoard(log_dir=log_dir)
+    #checkpoint = ModelCheckpoint(log_dir + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5',
+    #    monitor='val_loss', save_weights_only=True, save_best_only=True, period=25)
     reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3, verbose=1)
     early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)
 
