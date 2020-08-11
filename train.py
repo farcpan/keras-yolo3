@@ -75,7 +75,8 @@ def _main():
                 epochs=50,
                 initial_epoch=0,
                 #callbacks=[logging, checkpoint])   # if you need logging and checkpoint
-                callbacks=[checkpoint])
+                #callbacks=[checkpoint]
+                )
         #model.save_weights(log_dir + 'trained_weights_stage_1.h5')
 
     # Unfreeze and continue training, to fine-tune.
@@ -96,7 +97,9 @@ def _main():
             epochs=100,
             initial_epoch=50,
             #callbacks=[logging, checkpoint, reduce_lr, early_stopping])
-            callbacks=[checkpoint, reduce_lr, early_stopping])
+            callbacks=[
+                #checkpoint, 
+                reduce_lr, early_stopping])
         #model.save_weights(log_dir + 'trained_weights_final.h5')
 
         # You have to use save (not save_weights)
