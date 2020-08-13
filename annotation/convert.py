@@ -6,13 +6,13 @@ import json
 tags = ["green", "red", "unknown", "car-green", "car-red", "car-yellow", "car-unknown"]
 
 # path for VoTT export json file
-path_jsons = "../annotation/*.json"
+path_jsons = "../../annotation/*.json"
 
 # json files
 json_list = glob.glob(path_jsons)
 
 # input images directory
-image_in_dir = "../traffic-lights_20200806"
+image_in_dir = "../../traffic-lights_20200806"
 
 # output images directory
 image_out_dir = "./images"
