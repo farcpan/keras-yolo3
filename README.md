@@ -2,7 +2,7 @@
 
 [keras-yolo3](https://github.com/qqwweee/keras-yolo3)をforkしたプロジェクト。
 
-Colaboratory環境で動作させるための修正を適宜咥えている。
+Colaboratory環境で動作させるための修正を適宜加えている。
 
 ---
 
