@@ -1,99 +1,190 @@
-# keras-yolo3
+# YOLO-v3をColaboratoryで使用するためのプロジェクト
 
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
+[keras-yolo3](https://github.com/qqwweee/keras-yolo3)をforkしたプロジェクト。
 
-## Introduction
-
-A Keras implementation of YOLOv3 (Tensorflow backend) inspired by [allanzelener/YAD2K](https://github.com/allanzelener/YAD2K).
-
+Colaboratory環境で動作させるための修正を適宜加えている。
 
 ---
 
-## Quick Start
+## Colaboratory上で動作させるライブラリのバージョン
 
-1. Download YOLOv3 weights from [YOLO website](http://pjreddie.com/darknet/yolo/).
-2. Convert the Darknet YOLO model to a Keras model.
-3. Run YOLO detection.
+[keras-yolo3](https://github.com/qqwweee/keras-yolo3) は`tensorflow 2.0`や`keras 2.2`以降に対応していないため、Colaboratory上のライブラリバージョンを変更する。2020/06/27現在、以下のコマンド実行で動作に問題なし。
 
 ```
-wget https://pjreddie.com/media/files/yolov3.weights
-python convert.py yolov3.cfg yolov3.weights model_data/yolo.h5
-python yolo_video.py [OPTIONS...] --image, for image detection mode, OR
-python yolo_video.py [video_path] [output_path (optional)]
+!pip install --user -U keras==2.1.5
+!pip install --user -U tensorflow_gpu==1.14.0
 ```
 
-For Tiny YOLOv3, just do in a similar way, just specify model path and anchor path with `--model model_file` and `--anchors anchor_file`.
+上記実行後、メニューの`ランタイム`から`ランタイムを再起動する`を実行する（再起動しないとライブラリの更新が反映されない）。再起動後、以下コマンドでライブラリのバージョンを確認すること。
 
-### Usage
-Use --help to see usage of yolo_video.py:
+```python
+import tensorflow as tf
+import keras
+from tensorflow.python.client import device_lib
+
+# tensorflow 1.14.0であることを確認する# %tensorflow_version 1.x
+print(tf.__version__)
+
+# keras 2.1.5であることを確認する
+print(keras.__version__)
 ```
-usage: yolo_video.py [-h] [--model MODEL] [--anchors ANCHORS]
-                     [--classes CLASSES] [--gpu_num GPU_NUM] [--image]
-                     [--input] [--output]
 
-positional arguments:
-  --input        Video input path
-  --output       Video output path
-
-optional arguments:
-  -h, --help         show this help message and exit
-  --model MODEL      path to model weight file, default model_data/yolo.h5
-  --anchors ANCHORS  path to anchor definitions, default
-                     model_data/yolo_anchors.txt
-  --classes CLASSES  path to class definitions, default
-                     model_data/coco_classes.txt
-  --gpu_num GPU_NUM  Number of GPU to use, default 1
-  --image            Image detection mode, will ignore all positional arguments
-```
 ---
 
-4. MultiGPU usage: use `--gpu_num N` to use N GPUs. It is passed to the [Keras multi_gpu_model()](https://keras.io/utils/#multi_gpu_model).
+## Google Driveをマウント
 
-## Training
+ソースコードや学習データ、モデル等はGoolge Drive上に保存しておいた方が便利なため、ColaboratoryにGoogle Driveをマウントする。以下を実行後、Driveへのアクセスを承認する（画面の指示通りに実行すればOK）。
 
-1. Generate your own annotation file and class names file.  
-    One row for one image;  
-    Row format: `image_file_path box1 box2 ... boxN`;  
-    Box format: `x_min,y_min,x_max,y_max,class_id` (no space).  
-    For VOC dataset, try `python voc_annotation.py`  
-    Here is an example:
+```python
+from google.colab import drive
+drive.mount('/content/drive')
+```
+
+---
+
+## ディレクトリの移動
+
+Google Driveをマウント後、ソースコードを展開したいディレクトリに移動する。`/content/drive/'My Drive'/` がGoogle Driveのルートディレクトリに該当する。
+
+```
+%cd /content/drive/'My Drive'/yourworkspace
+```
+
+---
+
+## プロジェクトをclone
+
+本プロジェクトを`clone`する。
+
+```
+!git clone https://github.com/farcpan/keras-yolo3.git
+```
+
+`clone`後、指定したディレクトリに `keras-yolo3` ディレクトリが作成されてソースコード一式を取得できたことを確認する。
+
+---
+
+## weightファイルの取得
+
+以下を実行して `weight` ファイルを取得する。 `keras-yolo3` 直下でない場所に置いても良い。
+
+```
+!wget https://pjreddie.com/media/files/yolov3.weights
+```
+
+---
+
+## cfgおよびweightファイルをh5ファイルに変換
+
+以下を実行して `.h5` ファイルを作成する。
+
+```
+!python convert.py -w yolov3.cfg yolov3.weights model_data/yolo.h5
+```
+
+上記例では `model_data` 以下にファイルを出力しているが、パスやファイル名は変更してもよい。ただし、変更した場合にはソースコードの修正が必要になるので注意。
+
+---
+
+## annotationファイルおよびclassファイルの修正
+
+訓練用のアノテーションファイルとクラスファイルを修正する。詳細については[元プロジェクト](https://github.com/farcpan/keras-yolo3/tree/develop_colaboratory)のREADMEを参照すること。
+
+* アノテーションファイル: `training/annotation_sample.txt`
+
+* クラスファイル: `training/annotation_sample.txt`
+
+なお、画像サイズは`320x320`を想定している。アノテーションを行う画像ファイルはこのサイズで統一すること。
+
+---
+
+## 訓練
+
+上記のファイル名やファイル配置ディレクトリを変更していない場合は、このまま `train.py` スクリプトを実行する。
+
+```
+!python train.py
+```
+
+変更した場合は以下の箇所を修正してから上記を実行。
+
+* アノテーションファイルのパス: `train.py` 内 `_main` メソッドの以下箇所
+
+    ```python
+    # annotation data text file
+    annotation_path = 'training/annotation_sample.txt'
     ```
-    path/to/img1.jpg 50,100,150,200,0 30,50,200,120,3
-    path/to/img2.jpg 120,300,250,600,2
-    ...
+
+* クラスパス: `train.py` 内 `_main` メソッドの以下箇所
+
+    ```python
+    # class definition
+    classes_path = 'training/classes_sample.txt'
     ```
 
-2. Make sure you have run `python convert.py -w yolov3.cfg yolov3.weights model_data/yolo_weights.h5`  
-    The file model_data/yolo_weights.h5 is used to load pretrained weights.
+* 画像サイズ: `train.py` 内 `_main` メソッドの以下箇所
 
-3. Modify train.py and start training.  
-    `python train.py`  
-    Use your trained weights or checkpoint weights with command line option `--model model_file` when using yolo_video.py
-    Remember to modify class path or anchor path, with `--classes class_file` and `--anchors anchor_file`.
+    ```python
+    input_shape = (416, 320) # multiple of 32, hw
+    ```
 
-If you want to use original pretrained weights for YOLOv3:  
-    1. `wget https://pjreddie.com/media/files/darknet53.conv.74`  
-    2. rename it as darknet53.weights  
-    3. `python convert.py -w darknet53.cfg darknet53.weights model_data/darknet53_weights.h5`  
-    4. use model_data/darknet53_weights.h5 in train.py
+* `.h5` ファイルパス: `train.py` 内 `_main` メソッドの以下箇所
+
+    ```python
+    model = create_model(input_shape, anchors, num_classes, freeze_body=2, weights_path='model_data/yolo.h5')
+    ```
 
 ---
 
-## Some issues to know
+## 推論の実施
 
-1. The test environment is
-    - Python 3.5.2
-    - Keras 2.1.5
-    - tensorflow 1.6.0
+デフォルトの学習結果を使って推論を実行する場合。
 
-2. Default anchors are used. If you use your own anchors, probably some changes are needed.
+```python
+from yolo import YOLO
+from predict import Prediction
 
-3. The inference result is not totally the same as Darknet but the difference is small.
+# モデルをロードしてYOLOインスタンスを生成
+yolo_instance = YOLO(
+        model_path="./model_data/yolo.h5", 
+        anchors_path="./model_data/yolo_anchors.txt",
+        classes_path="./model_data/coco_classes.txt")
 
-4. The speed is slower than Darknet. Replacing PIL with opencv may help a little.
+# 推論用のインスタンスを生成
+pred = Prediction(image_path="your_image_path")
+pred.detect_img(yolo_instance)    
+```
 
-5. Always load pretrained weights and freeze layers in the first stage of training. Or try Darknet training. It's OK if there is a mismatch warning.
+---
 
-6. The training strategy is for reference only. Adjust it according to your dataset and your goal. And add further strategy if needed.
+## メモ
 
-7. For speeding up the training process with frozen layers train_bottleneck.py can be used. It will compute the bottleneck features of the frozen model first and then only trains the last layers. This makes training on CPU possible in a reasonable time. See [this](https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html) for more information on bottleneck features.
+### CoreMLに変換する場合の注意点
+
+`convert.py` によって生成される `.h5` ファイルは `save_weights` メソッドによって保存されているため、`coremltools`による変換がエラーになる。
+
+以下手順でロードしてから保存し直すことで変換ができるようになる。
+
+1. `.h5`ファイルをロードする。
+    ```python
+    from keras.layers import Input
+    from keras.models import load_model
+    from yolo3.model import yolo_body
+
+    num_anchors = 9
+    num_classes = 6    # 自作モデルの場合にはそれに合わせた数値に変更すること
+
+    yolo_model = yolo_body(Input(shape=(None,None,3)), num_anchors//3, num_classes)
+    yolo_model.load_weights("./model_data/yolo.h5") # make sure model, anchors and classes match
+
+    print(yolo_model.summary())
+    ```
+
+1. ロードしたモデルを保存する。
+    ```python
+    yolo_model.save("./model_data/resaved_yolo.h5")
+    ```
+
+* 参考: [YOLOv3-CoreML](https://github.com/Ma-Dan/YOLOv3-CoreML)
+
+---

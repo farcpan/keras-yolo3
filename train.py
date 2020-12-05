@@ -37,13 +37,14 @@ def _main():
     log_dir = args.log_dir
     classes_path = args.classes
     anchors_path = args.anchors
+
     class_names = get_classes(classes_path)
     num_classes = len(class_names)
     anchors = get_anchors(anchors_path)
 
     input_shape = (args.size, args.size)    # multiple of 32, hw
 
-    is_tiny_version = len(anchors)==6 # default setting
+    is_tiny_version = (len(anchors) == 6) # default setting
     if is_tiny_version:
         model = create_tiny_model(input_shape, anchors, num_classes, 
             freeze_body=2, weights_path=args.model)
