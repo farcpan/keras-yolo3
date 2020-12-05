@@ -2,8 +2,6 @@ import sys
 import argparse
 import time
 from PIL import Image
-import cv2
-from google.colab.patches import cv2_imshow
 
 class Prediction:
     def __init__(self, debug=False):
@@ -14,6 +12,7 @@ class Prediction:
         if self.debug:
             print("Image Path: {}".format(image_path))
 
+        results = []
         try:
             image = Image.open(self.image_path)
             img_resize = image.resize(size)
