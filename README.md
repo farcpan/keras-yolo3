@@ -8,11 +8,14 @@ Colaboratory環境で動作させるための修正を適宜加えている。
 
 ## Colaboratory上で動作させるライブラリのバージョン
 
-[keras-yolo3](https://github.com/qqwweee/keras-yolo3) は`tensorflow 2.0`や`keras 2.2`以降に対応していないため、Colaboratory上のライブラリバージョンを変更する。2020/06/27現在、以下のコマンド実行で動作に問題なし。
+[keras-yolo3](https://github.com/qqwweee/keras-yolo3) は`tensorflow 2.0`や`keras 2.2`以降に対応していないため、Colaboratory上のライブラリバージョンを変更する。
+
+- 2020/06/27現在、以下のコマンド実行で動作に問題なし
+- 2020/12/05現在、Tensorflowのバージョンは1.15.0で問題なし
 
 ```
 !pip install --user -U keras==2.1.5
-!pip install --user -U tensorflow_gpu==1.14.0
+!pip install --user -U tensorflow_gpu==1.15.0
 ```
 
 上記実行後、メニューの`ランタイム`から`ランタイムを再起動する`を実行する（再起動しないとライブラリの更新が反映されない）。再起動後、以下コマンドでライブラリのバージョンを確認すること。
@@ -22,7 +25,7 @@ import tensorflow as tf
 import keras
 from tensorflow.python.client import device_lib
 
-# tensorflow 1.14.0であることを確認する# %tensorflow_version 1.x
+# tensorflow 1.15.0であることを確認する# %tensorflow_version 1.x
 print(tf.__version__)
 
 # keras 2.1.5であることを確認する
@@ -42,22 +45,17 @@ drive.mount('/content/drive')
 
 ---
 
-## ディレクトリの移動
-
-Google Driveをマウント後、ソースコードを展開したいディレクトリに移動する。`/content/drive/'My Drive'/` がGoogle Driveのルートディレクトリに該当する。
-
-```
-%cd /content/drive/'My Drive'/yourworkspace
-```
-
----
-
 ## プロジェクトをclone
+
+ソースコードは `/content/` 直下に `clone` する。
 
 本プロジェクトを`clone`する。
 
 ```
-!git clone https://github.com/farcpan/keras-yolo3.git
+%%bash
+git clone https://github.com/farcpan/keras-yolo3.git
+cd keras-yolo3
+git checkout develop_colaboratory
 ```
 
 `clone`後、指定したディレクトリに `keras-yolo3` ディレクトリが作成されてソースコード一式を取得できたことを確認する。
@@ -66,10 +64,12 @@ Google Driveをマウント後、ソースコードを展開したいディレ�
 
 ## weightファイルの取得
 
-以下を実行して `weight` ファイルを取得する。 `keras-yolo3` 直下でない場所に置いても良い。
+以下を実行して `weight` ファイルを取得する。以下は `keras-yolo3/model_data` 直下にファイルを展開する場合。
 
 ```
-!wget https://pjreddie.com/media/files/yolov3.weights
+%%bash
+cd /content/keras-yolo3/model_data/
+wget https://pjreddie.com/media/files/yolov3.weights
 ```
 
 ---
@@ -79,7 +79,9 @@ Google Driveをマウント後、ソースコードを展開したいディレ�
 以下を実行して `.h5` ファイルを作成する。
 
 ```
-!python convert.py -w yolov3.cfg yolov3.weights model_data/yolo.h5
+%%bash
+cd /content/keras-yolo3/
+python convert.py -w yolov3.cfg model_data/yolov3.weights model_data/yolo.h5
 ```
 
 上記例では `model_data` 以下にファイルを出力しているが、パスやファイル名は変更してもよい。ただし、変更した場合にはソースコードの修正が必要になるので注意。
@@ -100,39 +102,68 @@ Google Driveをマウント後、ソースコードを展開したいディレ�
 
 ## 訓練
 
-上記のファイル名やファイル配置ディレクトリを変更していない場合は、このまま `train.py` スクリプトを実行する。
+`keras-yolo3` 直下に移動してからスクリプトを実行する。
 
 ```
-!python train.py
+%cd /content/keras-yolo3/
 ```
 
-変更した場合は以下の箇所を修正してから上記を実行。
+`train.py` スクリプトを実行する。
 
-* アノテーションファイルのパス: `train.py` 内 `_main` メソッドの以下箇所
+```
+python train.py  \
+    /content/keras-yolo3/model_data/trafficlights_annotation.txt \
+    /content/keras-yolo3/model_data/tiny_yolo_anchors.txt \
+    /content/keras-yolo3/model_data/trafficlights_classes.txt \
+    /content/keras-yolo3/model_data/yolo-tiny.h5 \
+    output.h5 \
+    --size 320 --log_dir /content/logs --batch_size_1 16 --epoch_1 10 --batch_size_2 4 --epoch_2 20
+```
 
-    ```python
-    # annotation data text file
-    annotation_path = 'training/annotation_sample.txt'
-    ```
+指定するパラメータは以下の通り。
 
-* クラスパス: `train.py` 内 `_main` メソッドの以下箇所
+* アノテーションファイルのパス
+    * `trafficlights_annotation.txt` 
 
-    ```python
-    # class definition
-    classes_path = 'training/classes_sample.txt'
-    ```
+* アンカー定義ファイルのパス
+    * デフォルトでは `keras-yolo3/model_data/yolo_anchors.txt` を使用する
+    * `tiny`モデルの場合は `tiny-yolo_anchors.txt`
 
-* 画像サイズ: `train.py` 内 `_main` メソッドの以下箇所
+* クラス定義ファイルのパス
+    * `trafficlights_classes.txt`
 
-    ```python
-    input_shape = (416, 320) # multiple of 32, hw
-    ```
+* モデル（ `.h5` ）ファイルパス
+    * `convert.py` を実行して作成した `.h5` ファイルのパスを指定する
 
-* `.h5` ファイルパス: `train.py` 内 `_main` メソッドの以下箇所
+* 学習結果（ `.h5` ）ファイル名
+    * `output.h5` 
+    * `--log_dir` オプションで指定したディレクトリ以下に、上記名前のファイルを出力する
 
-    ```python
-    model = create_model(input_shape, anchors, num_classes, freeze_body=2, weights_path='model_data/yolo.h5')
-    ```
+以下はオプションで指定する。
+
+* `--size`
+    * 画像サイズ（デフォルトは416）
+    * 現状は縦/横に同じ値しか指定できない
+    * 32の倍数を指定すること
+    
+* `--log_dir`
+    * 学習結果を出力するディレクトリ（デフォルトは `logs/000`）
+    * 最終的なモデルファイル（ `.h5` ）はここで指定したディレクトリの下に保存される
+
+* `--batch_size_1`
+    * 学習の第1ステップのミニバッチサイズ（デフォルトは32）
+    * Colaboratoryで動作させる場合、16程度にしないとGPUメモリ不足になるので注意
+
+* `--epoch_1`
+    * 学習の第1ステップのエポック数（デフォルトは50）
+
+* `--batch_size_2`
+    * 学習の第2ステップのミニバッチサイズ（デフォルトは32）
+    * Colaboratoryで動作させる場合、4程度にしないとGPUメモリ不足になるので注意
+     
+* `--epoch_2`
+    * 学習の第1ステップと第2ステップのエポック数（デフォルトは100）
+    *  `--epoch_1 50`, `--epoch_2 100` とした場合、第1ステップを50エポック実施した後、51〜100エポックを第2ステップで実行する
 
 ---
 
