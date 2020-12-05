@@ -1,7 +1,0 @@
-green
-red
-unknown
-car-green
-car-red
-car-yellow
-car-unknown
