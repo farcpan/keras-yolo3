@@ -14,13 +14,11 @@ class Prediction:
 
         results = []
         try:
-            image = Image.open(self.image_path)
-            img_resize = image.resize(size)
+            image = Image.open(image_path).resize(size)
         except:
             print('Open Error! Try again!')
         else:
             since = time.time()
-            results = yolo_instance.detect_image(img_resize)
-            print("Detection time: {} [sec]".format(time.time() - since))
+            results = yolo_instance.detect_image(image)
 
         return results
